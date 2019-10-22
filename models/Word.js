@@ -23,6 +23,5 @@ const WordSchema = new mongoose.Schema({
     dayfound: {
         type: Date,
         default: Date.now
-
     }
 })

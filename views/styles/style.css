@@ -1,0 +1,13 @@
+* {
+    padding: 0;
+    margin: 0
+}
+
+body{
+    /* background-color: rgb(53, 141, 255); */
+    background-color: rgb(100, 167, 255);
+}
+
+.container {
+    background-color: violet;
+}
