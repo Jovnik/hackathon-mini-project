@@ -1,13 +1,52 @@
-* {
-    padding: 0;
-    margin: 0
+
+body {
+    background: rgb(2,0,36);
+    background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%); 
 }
 
-body{
-    /* background-color: rgb(53, 141, 255); */
-    background-color: rgb(100, 167, 255);
+.register-login-link {
+    color: blue;
+}
+.register-login-link:hover{
+    text-decoration: underline;
+    color: rgb(37, 37, 255);
 }
 
-.container {
-    background-color: violet;
+.btn-primary {
+    color: #fff;
+    background-color: rgb(8, 8, 113);
+    border-color: rgb(8, 8, 113);
+}
+.btn-primary:hover {
+    transition: color 5s ease-in-out;
+    background-color: rgb(0, 81, 188);
+    border-color: rgb(0, 81, 188);
+}
+
+
+/* Dashboard */
+.dashboard-container {
+    background-color: white;
+    height: 20rem;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+
+.dashboard-container input {
+    margin-top: 2rem;
+    padding: 0.3rem 0.2rem;
+}
+
+.word-search-submit {
+  background-color: rgb(37, 37, 255);
+  border-radius: 3%;
+  color: white;
+  padding: 0.8rem 1.5rem;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin-top: 1rem;
 }

@@ -5,9 +5,17 @@ const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
+require('../config/passport')(passport);
 
-router.get('/hello', (req, res) => {
-    res.send('hello user');
+// router.use(express.static('public'));
+router.use(express.static(__dirname + '/../views')); 
+
+
+//Logout Handle
+router.get('/logout', (req, res) => {
+    req.logout();       //passport middleware gives us the req.logout() function
+    req.flash('success_msg', 'You have logged out');    
+    res.redirect('/users/login');
 })
 
 //Login Page
@@ -18,6 +26,15 @@ router.get('/login', (req, res) => {
 //Register Page
 router.get('/register', (req, res) => {
     res.render('register');
+})
+
+//Login Handle
+router.post('/login', (req, res, next) => {
+    passport.authenticate('local', {     
+        successRedirect: '/dashboard',
+        failureRedirect: '/users/login',
+        failureFlash: true
+    })(req, res, next)
 })
 
 //Register Handle
@@ -57,11 +74,19 @@ router.post('/register', async(req, res) => {
                     password: hash
                 });
 
-                console.log(newUser);
+                // console.log(newUser);
 
                 await newUser.save();
-                req.flash('success_msg', 'You have registered successfully');    // you need express-session for this to work
-                res.redirect('/dashboard');
+
+                req.login(newUser, (err) => {
+                    if(err){
+                        res.redirect('/users/login');
+                    } else {
+                        res.redirect('/dashboard');
+                    }
+                })
+                // req.flash('success_msg', 'You have registered successfully');    // you need express-session for this to work
+                // res.redirect('/dashboard');
 
             } catch (err) {
                 res.status(500).send('Server Error');

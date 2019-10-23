@@ -6,6 +6,7 @@ const flash = require('connect-flash')
 const session = require('express-session')
 const passport = require('passport');
 const path = require('path');
+require('./config/passport')(passport);
 
 const PORT = process.env.PORT || 5000;
 
@@ -16,6 +17,9 @@ const connectDB = require('./config/db');
 connectDB();
 
 const app = express();
+
+//Static local stylesheets
+app.use(express.static(__dirname + '/views')); 
 
 // app.use(express.static(__dirname + '/views'));       //need this to render local styles?
 
@@ -29,6 +33,10 @@ app.use(session({
     resave: false,
     saveUninitialized: true,
 }))
+
+// Passport Middleware  (needs to be placed after the express session middleware)
+app.use(passport.initialize());
+app.use(passport.session());
 
 //Connect Flash
 app.use(flash());

@@ -1,3 +1,22 @@
-<div>
-    <h1>This is the dashboard</h1>
+
+
+<div class="dashboard-container">
+    <h1 class="title">Search A Word</h1>
+
+    <div class="search-contain">
+        <input type="text" id="search" placeholder="Eg. eugene">
+    </div>
+
+    <button class="word-search-submit">Search</button>
+
 </div>
+
+
+<script>
+    const btn = document.querySelector('.word-search-submit');
+    const searchInput = document.querySelector('input[type="text"]')
+    btn.addEventListener('click', () => {
+        console.log(searchInput.value);
+    })
+
+</script>
