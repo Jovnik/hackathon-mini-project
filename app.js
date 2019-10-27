@@ -6,6 +6,7 @@ const flash = require('connect-flash')
 const session = require('express-session')
 const passport = require('passport');
 const path = require('path');
+const cors = require('cors');
 require('./config/passport')(passport);
 
 const PORT = process.env.PORT || 5000;
@@ -21,8 +22,12 @@ const app = express();
 //Static local stylesheets
 app.use(express.static(__dirname + '/views')); 
 
+//Enable cors
+app.use(cors());
+
 // app.use(express.static(__dirname + '/views'));       //need this to render local styles?
 
+app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use(morgan('tiny'));
@@ -53,7 +58,8 @@ app.use((req, res, next) => {
 app.use(expressLayouts);    //initialize the express layouts functionality
 app.set('view engine', 'ejs')   //need to set our view engine to ejs
 
-//Routes
+
+app.use('/words', require('./routes/words'));
 app.use('/users', require('./routes/users'));
 app.use('/', require('./routes/index'));
 

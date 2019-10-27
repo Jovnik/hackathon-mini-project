@@ -1,7 +1,12 @@
 
+html {
+    overflow-y: scroll;
+} 
+
 body {
-    background: rgb(2,0,36);
-    background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%); 
+    /* background: rgb(2,0,36); */
+    /* background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%);  */
+    background: #040831;
 }
 
 .register-login-link {
@@ -49,4 +54,61 @@ body {
   display: inline-block;
   font-size: 16px;
   margin-top: 1rem;
+  border: 0;
+}
+
+.word-entries{
+    /* border: 2px solid red; */
+    border: 0;
+}
+
+.word-div{
+    background-color: white;
+    color: rgb(37, 37, 255);
+    border: 1px solid black;
+    margin: 0.5rem 0;
+    padding: 1rem 1.5rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.word-div p {
+    margin: 0;
+    padding: 0;
+    /* border: 1px solid black; */    
+}
+
+.definition-div {
+    color: black;
+    width: 90%;
+}
+
+.add-svg {
+    width: 1.5rem;
+    height: 1.5rem;
+    color: green;
+    cursor: pointer;
+}
+
+.loader {
+    border: 0.2rem solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 0.2rem solid #2525ff;
+    width: 2rem;
+    height: 2rem;
+    animation: spin 2s linear infinite;
+}
+
+.loader-wrapper {
+    /* border: 2px solid red; */
+    display: flex;
+    justify-content: center;
+    margin-top: 3rem;
+}
+
+@keyframes spin {
+0% { transform: rotate(0deg); }
+100% { transform: rotate(360deg); }
 }

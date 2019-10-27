@@ -16,7 +16,11 @@ const UserSchema = new mongoose.Schema({
     date: {
         type: Date,
         default: Date.now
-    }
+    },
+    words: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'word'
+    }]
 })
 
 User = mongoose.model('user', UserSchema);

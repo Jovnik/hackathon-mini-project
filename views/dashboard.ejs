@@ -1,22 +1,152 @@
 
-
 <div class="dashboard-container">
+    <!-- <a href="/words/test">Click me</a> -->
     <h1 class="title">Search A Word</h1>
-
+    
     <div class="search-contain">
-        <input type="text" id="search" placeholder="Eg. eugene">
+        <input type="text" id="search" placeholder="eg. pragmatic">
     </div>
-
+    
     <button class="word-search-submit">Search</button>
-
+    
 </div>
 
-
 <script>
+    
     const btn = document.querySelector('.word-search-submit');
-    const searchInput = document.querySelector('input[type="text"]')
-    btn.addEventListener('click', () => {
-        console.log(searchInput.value);
+    const searchInput = document.querySelector('input[type="text"]');
+    // const wordEntriesDiv = document.querySelector('.word-entries');
+    const searchContainer = document.querySelector('.dashboard-container');
+
+    btn.addEventListener('click', async() => {
+
+        // let newWordEntriesDiv;  
+        const loaderWrapper = document.createElement('div');
+        loaderWrapper.className = 'loader-wrapper';
+
+        const newLoaderDiv = document.createElement('div');
+        newLoaderDiv.className = 'loader';
+        appendElement(loaderWrapper, newLoaderDiv);
+
+        searchContainer.after(loaderWrapper);
+        // searchContainer.after(newLoaderDiv);
+        const loaderDiv = document.querySelector('.loader');
+        console.log('loaderdiv', loaderDiv);
+
+        let wordEntriesDiv = document.querySelector('.word-entries');
+        if(wordEntriesDiv){     // remove the div if it exists
+            wordEntriesDiv.remove();
+        }   
+        //create a fresh div if it doesnt
+        const newWordEntriesDiv = document.createElement('div');
+        newWordEntriesDiv.className = 'word-entries';
+        searchContainer.after(newWordEntriesDiv);
+        // console.log(newWordEntriesDiv);      //this doesnt work for some reason, need to declare it outside the ifelse its made in
+        
+                
+        const word = searchInput.value;
+        const url = `https://dictionaryapi.com/api/v3/references/collegiate/json/${word}?key=<%= merriam_webster_api_key %>`
+
+        const resp = await fetch(url);
+        const data = Array.from(await resp.json());
+
+        let wordDisplayEntries = [];
+
+        data.forEach((entry) => {
+            let newWord = {};
+            newWord.hw = entry.hwi.hw.replace(/\*/g, '');  //need to purify the string here
+            newWord.fl = entry.fl;
+            newWord.defs = entry.shortdef;
+            wordDisplayEntries.push(newWord);
+        })
+
+        wordEntriesDiv = document.querySelector('.word-entries');
+        console.log('here', wordEntriesDiv);
+
+        loaderWrapper.remove();
+        // loaderDiv.remove();
+        wordDisplayEntries.forEach(entry => {
+            const wordDiv = document.createElement('div');
+            wordDiv.className = 'word-div';
+
+            const defDiv = document.createElement('div');
+            defDiv.className = 'definition-div';
+
+            const wordP = document.createElement('b');
+            wordP.textContent = `${entry.hw} (${entry.fl})`;
+
+            const defP = document.createElement('p');
+            defP.textContent = entry.defs.join(', ');
+
+            const plusIcon = document.createElement('img');
+            const wrapper = document.createElement('div');
+            wrapper.innerHTML = '<img class="add-svg" src="./styles/plus-original.svg" alt="plus icon">'
+
+            const add = wrapper.firstChild;
+            appendElement(defDiv, wordP);
+            appendElement(defDiv, defP);
+            appendElement(wordDiv, defDiv);
+            appendElement(wordDiv, add);
+            appendElement(wordEntriesDiv, wordDiv);
+        })
+
+        addIcons = document.querySelectorAll('img');
+        addIcons.forEach(icon => {
+            icon.addEventListener('click', async(e) => {
+                const postData = {};
+
+                const textContainer = e.target.previousSibling;
+                const wordDefEl = textContainer.querySelector('b').textContent;
+                let [word, partofspeech] = wordDefEl.split(' ');    //this needs to be modified for multi worded headwords
+
+                console.log(partofspeech);
+
+                const regExp = /\(([^)]+)\)/;
+                partofspeech = regExp.exec(partofspeech)[1];
+
+                const definitions = textContainer.querySelector('p').textContent;
+
+                postData.word = word;
+                postData.partofspeech = partofspeech;
+                postData.definitions = definitions;
+
+                // console.log(postData);
+
+                console.log(JSON.stringify(postData));
+
+
+                try {
+                    const resp = await fetch('/words/add-word', {
+                        method: 'POST', 
+                        body: JSON.stringify(postData),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });                                             //this will fetch the res.send of that route
+                    const data = await resp.text();             //because we sent a string in res.send(), we need to interpret the right data                                                      format with resp.text()
+                    console.log(data);
+                } catch (err) {
+                    console.error(err.message);
+                }
+            })
+        });
+
+        function appendElement(parent, el){
+            console.log('--', el);
+            parent.appendChild(el);
+        }
+
+        //hwi is headword information
+        // hw - headword
+        // meta -> stems
+        // fl - functional label ("noun/adjective")
+        // dt - definition text
+        // vis -verbal illustration (example sentence)
+        // OR short entry instead of dt and vis
+
+
+        // console.log(wordDisplayEntries);
+
     })
 
 </script>

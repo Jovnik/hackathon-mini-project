@@ -14,8 +14,7 @@ const WordSchema = new mongoose.Schema({
         required: true
     },
     example: {
-        type: String,
-        required: true
+        type: String
     },
     bookfoundin: {
         type: String
@@ -24,4 +23,8 @@ const WordSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     }
-})
+});
+
+Word = mongoose.model('word', WordSchema);
+
+module.exports = Word;
