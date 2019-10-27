@@ -19,8 +19,26 @@ router.get('/create-word', (req, res) => {
 
 router.get('/test', (req, res) => {
     console.log('HELLO');
-    res.render('test');
-    // res.send('hello');    
+    res.send('hello');    
+
+})
+
+router.get('/mywords', async(req, res) => {
+
+    // const user = await User.findOne({_id: req.user._id}).populate('words');
+    // const words = user.words;
+    // console.log(words);
+
+
+    res.render('mywords');
+})
+
+router.post('/new-word', async(req, res) => {
+    console.log(req.body);
+    console.log('hello');
+})
+
+router.post('/check-existing-word', async(req, res) => {
 
 })
 
@@ -28,13 +46,24 @@ router.post('/add-word', ensureAuthenticated, async(req, res) => {
 
     const { word, partofspeech, definitions } = req.body;
 
-    let user = await User.findOne({_id: req.user._id});   //this is an authenticated route anyway so youll definitely be able to find the user
+    const user = await User.findOne({_id: req.user._id}).populate('words');   //this is an authenticated route anyway so youll definitely be able to find the user
 
-    // console.log(user);
+    //need to check if the word that we're going to add is already in the users 'words' 
+    const usersWords = user.words;
+    let wordFound = false;
 
-    // console.log(req.user);
+    // need to use a for loop to check for the word so we can break (forEach loops cant leave the loop early)
+    for(let i=0; i<usersWords.length; i++){
+        if(usersWords[i].word == word && usersWords[i].partofspeech == partofspeech){
+            wordFound = true;
+            break;
+        }
+    }
 
-    // console.log(req.body);
+    if(wordFound){
+        return res.send({error: true, msg: `You have already added the ${partofspeech} ${word}`})
+    }
+
 
     const newWord = new Word({
         word: word,
@@ -47,15 +76,8 @@ router.post('/add-word', ensureAuthenticated, async(req, res) => {
 
     await user.save();
 
-    user = await User.findOne({_id: req.user._id}).populate('word'); 
-    
-    console.log(user);
+    res.send({error: false, msg: 'successfully completed the route'});
 
-
-    // console.log(newWord);
-
-
-    res.send('something');
 })
 
 router.get('/:word', (req, res) => {

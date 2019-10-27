@@ -31,7 +31,7 @@ body {
 
 /* Dashboard */
 .dashboard-container {
-    background-color: white;
+    /* background-color: white; */
     height: 20rem;
     display: flex;
     justify-content: center;
@@ -44,10 +44,14 @@ body {
     padding: 0.3rem 0.2rem;
 }
 
+.title {
+    color: white;
+}
+
 .word-search-submit {
-  background-color: rgb(37, 37, 255);
+  color: rgb(37, 37, 255);
   border-radius: 3%;
-  color: white;
+  background-color: white;
   padding: 0.8rem 1.5rem;
   text-align: center;
   text-decoration: none;
@@ -71,6 +75,17 @@ body {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    align-items: center;
+}
+
+.no-data-div {
+    background-color: white;
+    border: 1px solid black;
+    margin: 0.5rem 0;
+    padding: 1rem 1.5rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
     align-items: center;
 }
 
@@ -112,3 +127,18 @@ body {
 0% { transform: rotate(0deg); }
 100% { transform: rotate(360deg); }
 }
+
+
+input[type="email"]:focus, input[type="password"]:focus, input[type="submit"]:focus {
+    box-shadow: none;
+    /* border-color: #2525ff; */
+    border-color: #222;
+    /* border-color: blue; */
+    /* background-color:red; */
+}
+
+/* .btn:active {
+    background-color: blue;
+    color: blue;
+    box-shadow: none;
+} */

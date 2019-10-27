@@ -48,6 +48,7 @@ app.use(flash());
 
 //Global Variables - setting our own global variables in the middleware
 app.use((req, res, next) => {
+    res.locals.add_error_msg = req.flash('add_error_msg');
     res.locals.success_msg = req.flash('success_msg');
     res.locals.error_msg = req.flash('error_msg');
     res.locals.error = req.flash('error');

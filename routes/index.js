@@ -9,7 +9,7 @@ router.get('/', (req, res) => {
     res.render('splash');
 })
 
-router.get('/dashboard', (req, res) => {    //need to add ensureAuthenticated
+router.get('/dashboard', ensureAuthenticated, (req, res) => {    //need to add ensureAuthenticated
     // console.log('GOING TO PRINT THE USER');
     // console.log(req.user);
 

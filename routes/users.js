@@ -28,11 +28,6 @@ router.get('/register', (req, res) => {
     res.render('register');
 })
 
-router.get('/test', (req, res) => {
-    res.send('yakshemash');
-    // res.render('test');
-})
-
 //Login Handle
 router.post('/login', (req, res, next) => {
     passport.authenticate('local', {     

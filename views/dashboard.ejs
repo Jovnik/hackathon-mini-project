@@ -1,4 +1,8 @@
 
+<nav>
+    <a href="/words/mywords"><li>My Words</li></a>
+</nav>
+
 <div class="dashboard-container">
     <!-- <a href="/words/test">Click me</a> -->
     <h1 class="title">Search A Word</h1>
@@ -11,8 +15,9 @@
     
 </div>
 
+
 <script>
-    
+   
     const btn = document.querySelector('.word-search-submit');
     const searchInput = document.querySelector('input[type="text"]');
     // const wordEntriesDiv = document.querySelector('.word-entries');
@@ -29,9 +34,8 @@
         appendElement(loaderWrapper, newLoaderDiv);
 
         searchContainer.after(loaderWrapper);
-        // searchContainer.after(newLoaderDiv);
         const loaderDiv = document.querySelector('.loader');
-        console.log('loaderdiv', loaderDiv);
+        // console.log('loaderdiv', loaderDiv);
 
         let wordEntriesDiv = document.querySelector('.word-entries');
         if(wordEntriesDiv){     // remove the div if it exists
@@ -49,92 +53,103 @@
 
         const resp = await fetch(url);
         const data = Array.from(await resp.json());
+        console.log(data);
 
         let wordDisplayEntries = [];
 
-        data.forEach((entry) => {
-            let newWord = {};
-            newWord.hw = entry.hwi.hw.replace(/\*/g, '');  //need to purify the string here
-            newWord.fl = entry.fl;
-            newWord.defs = entry.shortdef;
-            wordDisplayEntries.push(newWord);
-        })
+        if(!data.length || typeof(data[0]) == "string"){    // the second statement of the OR is to check if the data returns an array of strings, it seems that merriam webster will return an array of possible intended searches if you enter an incorrect search term
 
-        wordEntriesDiv = document.querySelector('.word-entries');
-        console.log('here', wordEntriesDiv);
+            loaderWrapper.remove()
 
-        loaderWrapper.remove();
-        // loaderDiv.remove();
-        wordDisplayEntries.forEach(entry => {
-            const wordDiv = document.createElement('div');
-            wordDiv.className = 'word-div';
+            const noDataDiv = document.createElement('div');
+            noDataDiv.className = 'no-data-div';
 
-            const defDiv = document.createElement('div');
-            defDiv.className = 'definition-div';
+            const h2 = document.createElement('h2');
+            h2.textContent = 'Whoops! We couldnt find a word or phrase for that search term';
 
-            const wordP = document.createElement('b');
-            wordP.textContent = `${entry.hw} (${entry.fl})`;
+            wordEntriesDiv = document.querySelector('.word-entries');
 
-            const defP = document.createElement('p');
-            defP.textContent = entry.defs.join(', ');
+            appendElement(noDataDiv, h2);
+            appendElement(wordEntriesDiv, noDataDiv);
+        } else {
 
-            const plusIcon = document.createElement('img');
-            const wrapper = document.createElement('div');
-            wrapper.innerHTML = '<img class="add-svg" src="./styles/plus-original.svg" alt="plus icon">'
-
-            const add = wrapper.firstChild;
-            appendElement(defDiv, wordP);
-            appendElement(defDiv, defP);
-            appendElement(wordDiv, defDiv);
-            appendElement(wordDiv, add);
-            appendElement(wordEntriesDiv, wordDiv);
-        })
-
-        addIcons = document.querySelectorAll('img');
-        addIcons.forEach(icon => {
-            icon.addEventListener('click', async(e) => {
-                const postData = {};
-
-                const textContainer = e.target.previousSibling;
-                const wordDefEl = textContainer.querySelector('b').textContent;
-                let [word, partofspeech] = wordDefEl.split(' ');    //this needs to be modified for multi worded headwords
-
-                console.log(partofspeech);
-
-                const regExp = /\(([^)]+)\)/;
-                partofspeech = regExp.exec(partofspeech)[1];
-
-                const definitions = textContainer.querySelector('p').textContent;
-
-                postData.word = word;
-                postData.partofspeech = partofspeech;
-                postData.definitions = definitions;
-
-                // console.log(postData);
-
-                console.log(JSON.stringify(postData));
-
-
-                try {
-                    const resp = await fetch('/words/add-word', {
-                        method: 'POST', 
-                        body: JSON.stringify(postData),
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    });                                             //this will fetch the res.send of that route
-                    const data = await resp.text();             //because we sent a string in res.send(), we need to interpret the right data                                                      format with resp.text()
-                    console.log(data);
-                } catch (err) {
-                    console.error(err.message);
-                }
+            data.forEach((entry) => {
+                let newWord = {};
+                newWord.hw = entry.hwi.hw.replace(/\*/g, '');  //need to purify the string here
+                newWord.fl = entry.fl;
+                newWord.defs = entry.shortdef;
+                wordDisplayEntries.push(newWord);
             })
-        });
 
-        function appendElement(parent, el){
-            console.log('--', el);
-            parent.appendChild(el);
+            wordEntriesDiv = document.querySelector('.word-entries');
+    
+            loaderWrapper.remove();
+            wordDisplayEntries.forEach(entry => {
+                const wordDiv = document.createElement('div');
+                wordDiv.className = 'word-div';
+    
+                const defDiv = document.createElement('div');
+                defDiv.className = 'definition-div';
+    
+                const wordP = document.createElement('b');
+                wordP.textContent = `${entry.hw} (${entry.fl})`;
+    
+                const defP = document.createElement('p');
+                defP.textContent = entry.defs.join(', ');
+    
+                const addIcon = createElementFromHTML('<img class="add-svg" src="./styles/plus-original.svg" alt="plus icon">');
+    
+                appendElement(defDiv, wordP);
+                appendElement(defDiv, defP);
+                appendElement(wordDiv, defDiv);
+                appendElement(wordDiv, addIcon);
+                appendElement(wordEntriesDiv, wordDiv);
+            })
+    
+            addIcons = document.querySelectorAll('img');
+            addIcons.forEach(icon => {
+                icon.addEventListener('click', async(e) => {
+                    const postData = {};
+    
+                    console.log(e.target);
+                    const textContainer = e.target.previousSibling;
+                    const wordDefEl = textContainer.querySelector('b').textContent;
+                    let [word, partofspeech] = wordDefEl.split(' ');    //this needs to be modified for multi worded headwords
+    
+                    console.log(partofspeech);
+    
+                    const regExp = /\(([^)]+)\)/;
+                    partofspeech = regExp.exec(partofspeech)[1];
+    
+                    const definitions = textContainer.querySelector('p').textContent;
+    
+                    postData.word = word;
+                    postData.partofspeech = partofspeech;
+                    postData.definitions = definitions;
+    
+                    try {
+                        const resp = await fetch('/words/add-word', {
+                            method: 'POST', 
+                            body: JSON.stringify(postData),
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        });                                             //this will fetch the res.send of that route
+                        const data = await resp.json();             //because we sent a string in res.send(), we need to interpret the right data                                                      format with resp.text()
+                        if(data.error){
+                            e.target.src = `./styles/cross.svg`
+                            addError(data.msg);
+                        } else {
+                            e.target.src = `./styles/checkmark.svg`
+                        }
+                    } catch (err) {
+                        console.error(err.message);
+                    }
+                })
+            })
         }
+        
+
 
         //hwi is headword information
         // hw - headword
@@ -145,8 +160,34 @@
         // OR short entry instead of dt and vis
 
 
-        // console.log(wordDisplayEntries);
+    })  //this is the end bracket of the submit event
 
-    })
+    function appendElement(parent, el){
+        // console.log('appending///', parent, el);
+        parent.appendChild(el);
+        // console.log('append successful');
+    }
+
+    function addError(msg){
+        const errorString = 
+        `
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <strong>${msg}</strong>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        `
+        const error = createElementFromHTML(errorString);
+        searchContainer.before(error);
+    }
+
+    function createElementFromHTML(htmlString){
+        const div = document.createElement('string');
+        div.innerHTML = htmlString.trim();
+        return div.firstChild;
+    }
+
+
 
 </script>
